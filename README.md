@@ -1,5 +1,7 @@
 # 3D Dubins Paths
 
+[![Build Status](https://travis-ci.com/comrob/Dubins3D.jl.svg?branch=master)](https://travis-ci.com/comrob/Dubins3D.jl)
+
 This pakage provides 3D Dubins paths between two prescribed configuration. It provides smooth trajectories for fixed-wing aircraft while both curvature and pitch angle constraints are met.
 
 Full description is provided in the following paper.
