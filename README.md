@@ -25,7 +25,7 @@ Full description is provided in the following paper.
 
 ```julia
 using Pkg
-Pkg.add(PackageSpec(url="https://github.com/comrob/Dubins3D.jl"))
+Pkg.add("Dubins3D.jl")
 ```
 ## Basic usage
 
