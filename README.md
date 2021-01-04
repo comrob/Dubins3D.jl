@@ -6,13 +6,14 @@ This pakage provides 3D Dubins paths between two prescribed configuration. It pr
 
 Full description is provided in the following paper.
 ```
-@INPROCEEDINGS{VANA-ICRA-20, 
-    AUTHOR       = {Váňa, Petr and Neto, Armando Alves and Faigl, Jan and Macharet, Douglas G}, 
-    TITLE        = {Minimal 3D Dubins Path with Bounded Curvature and Pitch Angle}, 
+@INPROCEEDINGS{vana20minimal, 
+    TITLE        = {{Minimal 3D Dubins Path with Bounded Curvature and Pitch Angle}}, 
+    AUTHOR       = {V{\'a}{\v{n}}a, Petr and Neto, Armando Alves and Faigl, Jan and Macharet, Douglas G}, 
     BOOKTITLE    = {2020 IEEE International Conference on Robotics and Automation (ICRA)}, 
+    PAGES        = {8497--8503},
     YEAR         = {2020}, 
     ORGANIZATION = {IEEE}
-} 
+}
 ```
 
 ## 3D Dubins path example
