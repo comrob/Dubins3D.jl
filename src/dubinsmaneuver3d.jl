@@ -99,12 +99,12 @@ function DubinsManeuver3D(qi::Vector{Float64}, qf::Vector{Float64},
     return maneuver
 end
 
-function compute_sampling(self::DubinsManeuver3D; numberOfSamples::Number = 1000)
+function compute_sampling(self::DubinsManeuver3D; numberOfSamples::Integer = 1000)
     Dlat, Dlon = self.path
     # Sample points on the final path
     points = []
     lena = Dlon.maneuver.length
-    rangeLon = 0.0 : lena/(numberOfSamples-1) : lena
+    rangeLon = lena .* collect(0:numberOfSamples-1) ./ (numberOfSamples-1)
 
     for ran in rangeLon   
         offsetLon = ran
