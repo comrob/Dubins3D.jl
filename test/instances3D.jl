@@ -3,7 +3,7 @@ Test intances collected mainly from various papers about 3D Dubins paths.
 """
 
 rhomin = 40.
-pitchmax = pi * [-15., 20.] / 180.
+pitchlims = pi * [-15., 20.] / 180.
 deg2rad(x) = pi * x / 180.
 
 LONG = [

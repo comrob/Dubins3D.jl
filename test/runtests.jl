@@ -7,12 +7,12 @@ include("instances3D.jl")
 function print_results(data, name)
     @testset "Instances: $(name)" begin
         for (i, (qi, qf)) in enumerate(data)
-            dubins = DubinsManeuver3D(qi, qf, rhomin, pitchmax)
+            dubins = DubinsManeuver3D(qi, qf, rhomin, pitchlims)
   
-            t = @timed DubinsManeuver3D(qi, qf, rhomin, pitchmax)
+            t = @timed DubinsManeuver3D(qi, qf, rhomin, pitchlims)
   
-            lb = getLowerBound(qi, qf, rhomin, pitchmax)
-            ub = getUpperBound(qi, qf, rhomin, pitchmax)
+            lb = getLowerBound(qi, qf, rhomin, pitchlims)
+            ub = getUpperBound(qi, qf, rhomin, pitchlims)
             best_lb = lb.length
 
             @test lb.length <= dubins.length + 1e-5

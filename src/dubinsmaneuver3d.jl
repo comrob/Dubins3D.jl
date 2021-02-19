@@ -8,7 +8,7 @@ This struct contains all necessary information about the maneuver.
   * qi - initial configuration (x, y, z, heading, pitch)
   * qf - final configuration (x, y, z, heading, pitch)
   * rhomin - minimum turning radius
-  * pitchmax - limits of the pitch angle [pitch_min, pitch_max] 
+  * pitchlims - limits of the pitch angle [pitch_min, pitch_max] 
     where pitch_min < 0.0   
   * path - array containing horizontal and vertical Dubins paths
   * length - total length of the 3D maneuver 
@@ -18,24 +18,24 @@ mutable struct DubinsManeuver3D
     qf::Vector{Float64}
 
     rhomin::Float64
-    pitchmax::Vector{Float64}
+    pitchlims::Vector{Float64}
 
     path::Vector{DubinsManeuver2D}
     length::Float64
 end        
         
 """
-    DubinsManeuver3D(qi, qf, rhomin, pitchmax)
+    DubinsManeuver3D(qi, qf, rhomin, pitchlims)
 
 Create 3D Dubins path between two configurations qi, qf
     * qi - initial configuration (x, y, z, heading, pitch)
     * qf - final configuration (x, y, z, heading, pitch)
     * rhomin - minimum turning radius
-    * pitchmax - limits of the pitch angle [pitch_min, pitch_max] 
+    * pitchlims - limits of the pitch angle [pitch_min, pitch_max] 
 """
 function DubinsManeuver3D(qi::Vector{Float64}, qf::Vector{Float64}, 
-        rhomin::Float64, pitchmax::Vector{Float64})
-    maneuver = DubinsManeuver3D(qi, qf, rhomin, pitchmax, [], -1.)
+        rhomin::Float64, pitchlims::Vector{Float64})
+    maneuver = DubinsManeuver3D(qi, qf, rhomin, pitchlims, [], -1.)
 
     # Delta Z (height)
     zi = maneuver.qi[3]
@@ -134,7 +134,7 @@ function try_to_construct(self::DubinsManeuver3D, horizontal_radius::Float64)
     end
 
     vertical_radius = 1. / vertical_curvature
-    # Dlon = Vertical1D(qi3D, qf3D, vertical_radius, self.pitchmax)
+    # Dlon = Vertical1D(qi3D, qf3D, vertical_radius, self.pitchlims)
     Dlon = DubinsManeuver2D(qi3D, qf3D; rhomin = vertical_radius)
 
     if Dlon.maneuver.case == "RLR" || Dlon.maneuver.case == "RLR"
@@ -142,11 +142,11 @@ function try_to_construct(self::DubinsManeuver3D, horizontal_radius::Float64)
     end
 
     if Dlon.maneuver.case[1] == 'R'
-        if self.qi[5] - Dlon.maneuver.t < self.pitchmax[1]
+        if self.qi[5] - Dlon.maneuver.t < self.pitchlims[1]
             return []
         end
     else
-        if self.qi[5] + Dlon.maneuver.t > self.pitchmax[2]
+        if self.qi[5] + Dlon.maneuver.t > self.pitchlims[2]
             return []
         end
     end
@@ -155,10 +155,10 @@ function try_to_construct(self::DubinsManeuver3D, horizontal_radius::Float64)
     return [Dlat, Dlon]
 end
 
-function getLowerBound(qi, qf, rhomin=1, pitchmax=[-pi/4, pi/2])
-    maneuver = DubinsManeuver3D(qi, qf, rhomin, pitchmax, [], -1.)
+function getLowerBound(qi, qf, rhomin=1, pitchlims=[-pi/4, pi/2])
+    maneuver = DubinsManeuver3D(qi, qf, rhomin, pitchlims, [], -1.)
 
-    spiral_radius = rhomin * ( (cos(max(-pitchmax[1], pitchmax[2]))) ^ 2 )
+    spiral_radius = rhomin * ( (cos(max(-pitchlims[1], pitchlims[2]))) ^ 2 )
 
     qi2D = [maneuver.qi[i] for i in [1,2,4]]
     qf2D = [maneuver.qf[i] for i in [1,2,4]]
@@ -167,7 +167,7 @@ function getLowerBound(qi, qf, rhomin=1, pitchmax=[-pi/4, pi/2])
     qi3D = [0, maneuver.qi[3], maneuver.qi[5]]
     qf3D = [Dlat.maneuver.length, maneuver.qf[3], maneuver.qf[5]]
 
-    Dlon = Vertical(qi3D, qf3D, maneuver.rhomin, maneuver.pitchmax)
+    Dlon = Vertical(qi3D, qf3D, maneuver.rhomin, maneuver.pitchlims)
 
     if Dlon.maneuver.case == "XXX"
         # TODO - update Vertical1D such that it compute the shortest prolongation
@@ -180,8 +180,8 @@ function getLowerBound(qi, qf, rhomin=1, pitchmax=[-pi/4, pi/2])
     return maneuver
 end
 
-function getUpperBound(qi, qf, rhomin=1, pitchmax=[-pi/4, pi/2])
-    maneuver = DubinsManeuver3D(qi, qf, rhomin, pitchmax, [], -1.)
+function getUpperBound(qi, qf, rhomin=1, pitchlims=[-pi/4, pi/2])
+    maneuver = DubinsManeuver3D(qi, qf, rhomin, pitchlims, [], -1.)
 
     safeRadius = sqrt(2) * maneuver.rhomin
 
@@ -201,7 +201,7 @@ function getUpperBound(qi, qf, rhomin=1, pitchmax=[-pi/4, pi/2])
     qi3D = [0, maneuver.qi[3], maneuver.qi[5]]
     qf3D = [Dlat.maneuver.length, maneuver.qf[3], maneuver.qf[5]]
 
-    Dlon = Vertical(qi3D, qf3D, safeRadius, maneuver.pitchmax)
+    Dlon = Vertical(qi3D, qf3D, safeRadius, maneuver.pitchlims)
 
     if Dlon.maneuver.case == "XXX"
         # TODO - update Vertical1D such that it compute the shortest prolongation

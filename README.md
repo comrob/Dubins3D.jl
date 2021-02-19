@@ -44,9 +44,9 @@ qf = [500., 350., 100., deg2rad(0.), deg2rad(-5.)]
 # Minimum turning radius
 rhomin = 40.
 # Pich angle constraints [min_pitch, max_pitch]
-pitchmax = deg2rad.([-15., 20.])
+pitchlims = deg2rad.([-15., 20.])
 
-maneuver = DubinsManeuver3D(qi, qf, rhomin, pitchmax)
+maneuver = DubinsManeuver3D(qi, qf, rhomin, pitchlims)
 
 # Length of the 3D Dubins path
 @show maneuver.length
