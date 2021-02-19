@@ -99,18 +99,59 @@ function DubinsManeuver3D(qi::Vector{Float64}, qf::Vector{Float64},
     return maneuver
 end
 
-function compute_sampling(self::DubinsManeuver3D; numberOfSamples::Integer = 1000)
+"""
+    get_configuration(self::DubinsManeuver3D, distance::Number)
+
+Finds vehicle configuration at the given distance from start of maneuver
+    * self - maneuver on which a configuration is queried
+    * distance - distance from the start of maneuver where vehicle configuration is queried
+"""
+function get_configuration(self::DubinsManeuver3D, distance::Number)
+    Dlat, Dlon = self.path
+    lena = Dlon.maneuver.length
+    qSZ = getCoordinatesAt(Dlon, distance)
+    qXY = getCoordinatesAt(Dlat, qSZ[1])
+    return [qXY[1], qXY[2], qSZ[2], qXY[3], qSZ[3]]
+end
+
+"""
+    compute_sampling(self::DubinsManeuver3D; numberOfSamples::Number = 1000)
+
+Sample the maneuver with a given number of samples
+    * self - maneuver to be sampled
+    * numberOfSamples - number of samples taken along the maneuver
+"""
+function compute_sampling(self::DubinsManeuver3D; numberOfSamples::Number = 1000)
+    Dlat, Dlon = self.path
+    lena = Dlon.maneuver.length
+    samplingStep = lena/(numberOfSamples-1)
+
+    return sample_path(self, samplingStep=samplingStep, addEndpoint=false)
+end
+
+"""
+    sample_path(self::DubinsManeuver3D, samplingStep::Number = 0.1; addEndpoint::Bool = true)
+
+Sample the maneuver with a given sampling step
+    * self - maneuver to be sampled
+    * samplingStep - distance between two samples
+    * addEndpoint - wheater the maneuver endpoint should be explicitelly added to the sampling
+"""
+function sample_path(self::DubinsManeuver3D; samplingStep::Number = 0.1, addEndpoint::Bool = true)
     Dlat, Dlon = self.path
     # Sample points on the final path
     points = []
     lena = Dlon.maneuver.length
-    rangeLon = lena .* collect(0:numberOfSamples-1) ./ (numberOfSamples-1)
+    rangeLon = 0.0 : samplingStep : lena
 
     for ran in rangeLon   
-        offsetLon = ran
-        qSZ = getCoordinatesAt(Dlon, offsetLon)
-        qXY = getCoordinatesAt(Dlat, qSZ[1])
-        push!(points, [qXY[1], qXY[2], qSZ[2], qXY[3], qSZ[3]])
+        q = get_configuration(self, ran)
+        push!(points, q)
+    end
+
+    if addEndpoint
+        q = get_configuration(self, lena)
+        push!(points, q)
     end
     
     points
