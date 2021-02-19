@@ -1,7 +1,7 @@
 name = "Dubins3D"
 uuid = "b218df9c-8706-40c8-80f9-13e28a209add"
 authors = ["Petr Vana <vanapet1@fel.cvut.cz>"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
