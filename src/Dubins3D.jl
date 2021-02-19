@@ -8,6 +8,6 @@ module Dubins3D
 include("dubinsmaneuver3d.jl")
 
 export DubinsManeuver2D
-export DubinsManeuver3D, getLowerBound, getUpperBound, compute_sampling
+export DubinsManeuver3D, getLowerBound, getUpperBound, compute_sampling, sample_path, get_configuration
 
 end
